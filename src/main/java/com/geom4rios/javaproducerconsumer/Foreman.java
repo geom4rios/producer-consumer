@@ -53,7 +53,6 @@ public class Foreman extends Thread {
         this.start();
     }
 
-    // the foreman might take into consideration the average time required for a consumer to consume a task, the queue capacity
     @Override
     public void run() {
         super.run();

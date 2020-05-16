@@ -38,8 +38,8 @@ public class Consumer implements Runnable {
             }
             log.info("Consumer died after waiting for 1 second to poll an element from the queue and got nothing");
         } catch (Exception e) {
+            log.info("Consumer died after an exception occured");
             log.error(e.getMessage(), e);
-            log.info("Consumer died after receiving an exception");
         }
         this.engine.decreaseConsumersRunningByType(taskType);
     }
