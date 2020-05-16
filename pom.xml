@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.geom4rios</groupId>
-    <artifactId>java-producer-consumer</artifactId>
+    <artifactId>java-producerImpl-consumer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>java-producer-consumer</name>
+    <name>java-producerImpl-consumer</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

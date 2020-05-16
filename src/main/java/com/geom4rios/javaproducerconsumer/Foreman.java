@@ -1,9 +1,13 @@
 package com.geom4rios.javaproducerconsumer;
 
+import com.geom4rios.javaproducerconsumer.type.Producer;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Component
@@ -11,13 +15,27 @@ public class Foreman extends Thread {
 
     private final ApplicationContext appContext;
     private final Engine engine;
-    private final ExecutorService service;
+    private final ExecutorService producerService;
+    private final ExecutorService ioService;
+    private final ExecutorService cpuService;
     private final Logger log;
 
-    public Foreman(ApplicationContext applicationContext, Engine engine, ExecutorService service, Logger log) {
+    List<Producer> producerList = new ArrayList<>();
+
+    public Foreman
+    (
+        ApplicationContext applicationContext,
+        Engine engine,
+        @Qualifier("producerExecutor") ExecutorService producerService,
+        @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
+        @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
+        Logger log)
+    {
         this.appContext = applicationContext;
         this.engine = engine;
-        this.service = service;
+        this.producerService = producerService;
+        this.ioService = ioService;
+        this.cpuService = cpuService;
         this.log = log;
     }
 
@@ -27,18 +45,15 @@ public class Foreman extends Thread {
         super.run();
         try {
             while (true) {
-                boolean needToCreateProducer = needToCreateProducer();
-                if (needToCreateProducer) {
-                    createProducer();
-                }
                 boolean needToCreateConsumer = needToCreateConsumer();
                 if (needToCreateConsumer) {
-                    createConsumer();
+                    createConsumers();
                 }
-                if (!needToCreateConsumer && !needToCreateProducer) {
+                if (!needToCreateConsumer && producerList.isEmpty()) {
                     break;
                 }
-                Thread.sleep(5000);
+                runProducers();
+                Thread.sleep(1000);
             }
             log.info("Foreman stopped, no tasks left to execute!");
         } catch (InterruptedException e) {
@@ -46,29 +61,35 @@ public class Foreman extends Thread {
         }
     }
 
+    public void addProducer(Producer producer) {
+        this.producerList.add(producer);
+    }
+
+    private void runProducers() {
+        for (int i=0; i<producerList.size(); i++) {
+            producerService.submit(producerList.get(i));
+        }
+        producerList.clear();
+    }
+
     private boolean needToCreateConsumer() {
         return engine.blockingDeque.size() > 0;
     }
 
-    private boolean needToCreateProducer() {
-        int pendingTasks = engine.totalTasksToCreate.decrementAndGet();
-        if (pendingTasks >= 0) {
-            return true;
-        } else {
-            engine.totalTasksToCreate.compareAndSet(-1, 0);
-            return false;
+    private void createConsumers() {
+        int currentCpuIntensiveTasks = this.engine.cpuIntensiveTasks.get();
+        if (currentCpuIntensiveTasks > 0) {
+            log.info("Creating new consumer for cpu operations and adding to cpu service!");
+            log.info("Current cpu intensive tasks: " + currentCpuIntensiveTasks);
+            Consumer consumer = appContext.getBean("cpuConsumer", Consumer.class);
+            cpuService.submit(consumer);
         }
-    }
-
-    private void createConsumer() {
-        log.info("Creating new consumer!");
-        Consumer consumer = appContext.getBean("consumer", Consumer.class);
-        service.submit(consumer);
-    }
-
-    private void createProducer() {
-        log.info("Creating new producer!");
-        Producer producer = appContext.getBean("producer", Producer.class);
-        service.submit(producer);
+        int currentIoIntensiveTasks = this.engine.ioIntensiveTasks.get();
+        if (currentIoIntensiveTasks > 0) {
+            log.info("Creating new consumer for io operations and adding to io service");
+            log.info("Current io intensive tasks: " + currentIoIntensiveTasks);
+            Consumer consumer = appContext.getBean("ioConsumer", Consumer.class);
+            ioService.submit(consumer);
+        }
     }
 }
