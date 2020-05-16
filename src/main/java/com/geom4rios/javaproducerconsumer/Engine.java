@@ -1,7 +1,7 @@
 package com.geom4rios.javaproducerconsumer;
 
-import com.geom4rios.javaproducerconsumer.type.Task;
-import com.geom4rios.javaproducerconsumer.type.TaskType;
+import com.geom4rios.javaproducerconsumer.task.Task;
+import com.geom4rios.javaproducerconsumer.task.TaskType;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;

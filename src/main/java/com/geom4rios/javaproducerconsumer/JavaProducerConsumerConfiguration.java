@@ -1,6 +1,8 @@
 package com.geom4rios.javaproducerconsumer;
 
-import com.geom4rios.javaproducerconsumer.type.TaskType;
+import com.geom4rios.javaproducerconsumer.consumer.Consumer;
+import com.geom4rios.javaproducerconsumer.examples.ProducerImpl;
+import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -43,12 +45,6 @@ public class JavaProducerConsumerConfiguration {
     @Bean
     public Engine getEngine() {
         return new Engine(20, TaskType.IO_INTENSIVE, 20);
-    }
-
-    @Bean(name = "producer")
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ProducerImpl getProducer(Engine engine, Logger log) {
-        return new ProducerImpl(engine, log);
     }
 
     @Bean(name = "ioConsumer")

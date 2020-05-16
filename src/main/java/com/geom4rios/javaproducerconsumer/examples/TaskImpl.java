@@ -1,7 +1,7 @@
-package com.geom4rios.javaproducerconsumer;
+package com.geom4rios.javaproducerconsumer.examples;
 
-import com.geom4rios.javaproducerconsumer.type.Task;
-import com.geom4rios.javaproducerconsumer.type.TaskType;
+import com.geom4rios.javaproducerconsumer.task.Task;
+import com.geom4rios.javaproducerconsumer.task.TaskType;
 
 public class TaskImpl implements Task {
 

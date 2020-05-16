@@ -1,6 +1,8 @@
 package com.geom4rios.javaproducerconsumer;
 
-import com.geom4rios.javaproducerconsumer.type.Producer;
+import com.geom4rios.javaproducerconsumer.consumer.Consumer;
+import com.geom4rios.javaproducerconsumer.producer.Producer;
+import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -67,7 +69,7 @@ public class Foreman extends Thread {
 
     private void runProducers() {
         for (int i=0; i<producerList.size(); i++) {
-            producerService.submit(producerList.get(i));
+            producerService.submit(new ProducerRunner(this.engine, producerList.get(i), this.log));
         }
         producerList.clear();
     }

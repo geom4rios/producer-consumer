@@ -1,7 +1,8 @@
-package com.geom4rios.javaproducerconsumer;
+package com.geom4rios.javaproducerconsumer.consumer;
 
-import com.geom4rios.javaproducerconsumer.type.Task;
-import com.geom4rios.javaproducerconsumer.type.TaskType;
+import com.geom4rios.javaproducerconsumer.Engine;
+import com.geom4rios.javaproducerconsumer.task.Task;
+import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 
 public class Consumer implements Runnable {

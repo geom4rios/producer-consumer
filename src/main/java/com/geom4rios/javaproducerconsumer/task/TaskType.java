@@ -1,4 +1,4 @@
-package com.geom4rios.javaproducerconsumer.type;
+package com.geom4rios.javaproducerconsumer.task;
 
 public enum TaskType {
     CPU_INTENSIVE,
