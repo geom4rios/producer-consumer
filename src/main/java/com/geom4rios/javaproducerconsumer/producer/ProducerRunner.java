@@ -23,7 +23,7 @@ public class ProducerRunner implements Runnable {
     public void run() {
         List<Task> newTasks = this.producer.createNewTasks();
         for (Task taskCreated : newTasks) {
-            this.engine.blockingDeque.addLast(taskCreated);
+            this.engine.concurrentLinkedDeque.addLast(taskCreated);
             if (taskCreated.getTaskType() == TaskType.IO_INTENSIVE) {
                 this.engine.ioIntensiveTasks.addAndGet(1);
             } else if (taskCreated.getTaskType() == TaskType.CPU_INTENSIVE) {
@@ -34,5 +34,6 @@ public class ProducerRunner implements Runnable {
             log.info("Task produced of type: " + taskCreated.getTaskType().name());
         }
         log.info("Producer completed!");
+        this.engine.numberOfProducersRunning.decrementAndGet();
     }
 }

@@ -4,6 +4,7 @@ import com.geom4rios.javaproducerconsumer.consumer.Consumer;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,9 @@ import java.util.concurrent.Executors;
 public class JavaProducerConsumerConfiguration {
 
     @Bean
-    public Logger getLogger() {
-        return LoggerFactory.getLogger(JavaProducerConsumerApplication.class);
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    Logger logger(InjectionPoint injectionPoint){
+        return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass());
     }
 
     @Bean(name = "producerExecutor")
@@ -48,7 +50,7 @@ public class JavaProducerConsumerConfiguration {
 
     @Bean
     public Engine getEngine() {
-        return new Engine(20, TaskType.IO_INTENSIVE, 20);
+        return new Engine();
     }
 
     @Bean(name = "ioConsumer")

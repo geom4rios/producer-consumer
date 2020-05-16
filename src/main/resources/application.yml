@@ -1,3 +1,6 @@
 producer-consumer:
   default-tasks-to-create: 10
   default-queue-capacity: 1000
+logging:
+  file:
+    path: logs

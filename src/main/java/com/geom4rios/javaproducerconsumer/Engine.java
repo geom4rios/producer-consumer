@@ -7,35 +7,56 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Engine {
-    public static int numberOfProducersRunning = 0;
-    public static int numberOfConsumersRunning = 0;
-    public static int messagesProduced = 0;
-    public static int messagesConsumed = 0;
+    // producers
+    public AtomicInteger numberOfProducersRunning = new AtomicInteger(0);
+    // consumers
+    public AtomicInteger numberOfConsumersRunning = new AtomicInteger(0);
+    public AtomicInteger cpuIntensiveConsumersRunning = new AtomicInteger(0);
+    public AtomicInteger ioIntensiveConsumersRunning = new AtomicInteger(0);
+    public AtomicInteger memoryIntensiveConsumersRunning = new AtomicInteger(0);
+    // consumed
+    public AtomicInteger cpuIntensiveTasksConsumed = new AtomicInteger(0);
+    public AtomicInteger ioIntensiveTasksConsumed = new AtomicInteger(0);
+    public AtomicInteger memoryIntensiveTasksConsumed = new AtomicInteger(0);
+    // pending
     public AtomicInteger cpuIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger ioIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger memoryIntensiveTasks = new AtomicInteger(0);
-    public AtomicInteger totalTasksToCreate;
-    private final int queueCapacity;
-    private final TaskType taskType;
-    public ConcurrentLinkedDeque<Task> blockingDeque;
-
-    public Engine(int queueCapacity, TaskType taskType, int totalTasksToCreate) {
-        this.queueCapacity = queueCapacity;
-        this.taskType = taskType;
-        blockingDeque = new ConcurrentLinkedDeque<>();
-        this.totalTasksToCreate = new AtomicInteger(totalTasksToCreate);
-    }
+    // queue
+    public ConcurrentLinkedDeque<Task> concurrentLinkedDeque = new ConcurrentLinkedDeque<>();
 
     public void decreaseTaskByType(TaskType taskType) {
         switch(taskType) {
             case IO_INTENSIVE:
                 this.ioIntensiveTasks.decrementAndGet();
+                this.ioIntensiveTasksConsumed.incrementAndGet();
                 break;
             case CPU_INTENSIVE:
                 this.cpuIntensiveTasks.decrementAndGet();
+                this.cpuIntensiveTasksConsumed.incrementAndGet();
                 break;
             case MEMORY_INTENSIVE:
                 this.memoryIntensiveTasks.decrementAndGet();
+                this.memoryIntensiveTasksConsumed.incrementAndGet();
+                break;
+            default:
+                throw new UnsupportedOperationException("Task type not recognized!");
+        }
+    }
+
+    public void decreaseConsumersRunningByType(TaskType taskType) {
+        switch(taskType) {
+            case IO_INTENSIVE:
+                this.ioIntensiveConsumersRunning.decrementAndGet();
+                this.numberOfConsumersRunning.decrementAndGet();
+                break;
+            case CPU_INTENSIVE:
+                this.cpuIntensiveConsumersRunning.decrementAndGet();
+                this.numberOfConsumersRunning.decrementAndGet();
+                break;
+            case MEMORY_INTENSIVE:
+                this.memoryIntensiveConsumersRunning.decrementAndGet();
+                this.numberOfConsumersRunning.decrementAndGet();
                 break;
             default:
                 throw new UnsupportedOperationException("Task type not recognized!");

@@ -21,7 +21,7 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while (true) {
-                Task task = engine.blockingDeque.pollLast();
+                Task task = engine.concurrentLinkedDeque.pollLast();
                 if (task != null) {
                     if (task.getTaskType() == this.taskType) {
                         log.info("Consuming " + this.taskType.name() + " task!");
@@ -29,7 +29,7 @@ public class Consumer implements Runnable {
                         this.engine.decreaseTaskByType(taskType);
                     } else {
                         log.info("Adding task back to queue");
-                        engine.blockingDeque.addFirst(task);
+                        engine.concurrentLinkedDeque.addFirst(task);
                         Thread.sleep(500); // leave some time for other consumers to pick that task
                     }
                 } else {
@@ -41,5 +41,6 @@ public class Consumer implements Runnable {
             log.error(e.getMessage(), e);
             log.info("Consumer died after receiving an exception");
         }
+        this.engine.decreaseConsumersRunningByType(taskType);
     }
 }

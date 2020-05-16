@@ -6,6 +6,8 @@ import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,14 +28,15 @@ public class Foreman extends Thread {
     List<Producer> producerList = new ArrayList<>();
 
     public Foreman
-    (
-        ApplicationContext applicationContext,
-        Engine engine,
-        @Qualifier("producerExecutor") ExecutorService producerService,
-        @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
-        @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
-        @Qualifier("memoryIntensiveExecutor") ExecutorService memoryService,
-        Logger log)
+            (
+                    ApplicationContext applicationContext,
+                    Engine engine,
+                    @Qualifier("producerExecutor") ExecutorService producerService,
+                    @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
+                    @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
+                    @Qualifier("memoryIntensiveExecutor") ExecutorService memoryService,
+                    Logger log
+            )
     {
         this.appContext = applicationContext;
         this.engine = engine;
@@ -42,6 +45,12 @@ public class Foreman extends Thread {
         this.cpuService = cpuService;
         this.memoryService = memoryService;
         this.log = log;
+    }
+
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        log.info("Starting foreman");
+        this.start();
     }
 
     // the foreman might take into consideration the average time required for a consumer to consume a task, the queue capacity
@@ -55,53 +64,104 @@ public class Foreman extends Thread {
                     createConsumers();
                 }
                 if (!needToCreateConsumer && producerList.isEmpty()) {
-                    break;
+                    log.info("Foreman waiting for producers");
+                    synchronized (this){
+                        this.wait();
+                    }
                 }
                 runProducers();
                 Thread.sleep(1000);
             }
-            log.info("Foreman stopped, no tasks left to execute!");
         } catch (InterruptedException e) {
+            log.info("Foreman stopped unexpectedly!");
             e.printStackTrace();
+        } finally {
+            this.memoryService.shutdown();
+            this.ioService.shutdown();
+            this.cpuService.shutdown();
+            this.producerService.shutdown();
         }
     }
 
     public void addProducer(Producer producer) {
         this.producerList.add(producer);
+        synchronized (this) {
+            if (this.getState().equals(State.WAITING)) {
+                this.notify();
+            }
+        }
     }
 
     private void runProducers() {
-        for (int i=0; i<producerList.size(); i++) {
-            producerService.submit(new ProducerRunner(this.engine, producerList.get(i), this.log));
+        for (Producer producer : producerList) {
+            ProducerRunner producerRunner = new ProducerRunner(this.engine, producer, this.log);
+            producerService.submit(producerRunner);
+            this.engine.numberOfProducersRunning.incrementAndGet();
         }
         producerList.clear();
     }
 
     private boolean needToCreateConsumer() {
-        return engine.blockingDeque.size() > 0;
+        return engine.concurrentLinkedDeque.size() > 0;
     }
 
     private void createConsumers() {
-        int currentCpuIntensiveTasks = this.engine.cpuIntensiveTasks.get();
-        if (currentCpuIntensiveTasks > 0) {
-            log.info("Creating new consumer for cpu operations and adding to cpu service!");
-            log.info("Current cpu intensive tasks: " + currentCpuIntensiveTasks);
-            Consumer consumer = appContext.getBean("cpuConsumer", Consumer.class);
-            cpuService.submit(consumer);
+        if (shouldCreateCpuConsumer()) {
+            createCpuConsumer();
         }
+        if (shouldCreateIoConsumer()) {
+            createIOConsumer();
+        }
+        if (shouldCreateMemoryConsumer()) {
+            createMemoryConsumer();
+        }
+    }
+
+    private boolean shouldCreateIoConsumer() {
         int currentIoIntensiveTasks = this.engine.ioIntensiveTasks.get();
         if (currentIoIntensiveTasks > 0) {
-            log.info("Creating new consumer for io operations and adding to io service");
-            log.info("Current io intensive tasks: " + currentIoIntensiveTasks);
-            Consumer consumer = appContext.getBean("ioConsumer", Consumer.class);
-            ioService.submit(consumer);
+            return true;
         }
+        return false;
+    }
+
+    private void createIOConsumer() {
+        log.info("Creating new consumer for io operations and adding to io service");
+        Consumer consumer = appContext.getBean("ioConsumer", Consumer.class);
+        ioService.submit(consumer);
+        this.engine.numberOfConsumersRunning.incrementAndGet();
+        this.engine.ioIntensiveConsumersRunning.incrementAndGet();
+    }
+
+    private boolean shouldCreateCpuConsumer() {
+        int currentCpuIntensiveTasks = this.engine.cpuIntensiveTasks.get();
+        if (currentCpuIntensiveTasks > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private void createCpuConsumer() {
+        log.info("Creating new consumer for cpu operations and adding to cpu service!");
+        Consumer consumer = appContext.getBean("cpuConsumer", Consumer.class);
+        cpuService.submit(consumer);
+        this.engine.numberOfConsumersRunning.incrementAndGet();
+        this.engine.cpuIntensiveConsumersRunning.incrementAndGet();
+    }
+
+    private boolean shouldCreateMemoryConsumer() {
         int currentMemoryIntensiveTasks = this.engine.memoryIntensiveTasks.get();
         if (currentMemoryIntensiveTasks > 0) {
-            log.info("Creating new consumer for memory operations and adding to memory service");
-            log.info("Current memory intensive tasks: " + currentMemoryIntensiveTasks);
-            Consumer consumer = appContext.getBean("memoryConsumer", Consumer.class);
-            memoryService.submit(consumer);
+            return true;
         }
+        return false;
+    }
+
+    private void createMemoryConsumer() {
+        log.info("Creating new consumer for memory operations and adding to memory service");
+        Consumer consumer = appContext.getBean("memoryConsumer", Consumer.class);
+        memoryService.submit(consumer);
+        this.engine.numberOfConsumersRunning.incrementAndGet();
+        this.engine.memoryIntensiveConsumersRunning.incrementAndGet();
     }
 }

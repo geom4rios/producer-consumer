@@ -28,7 +28,6 @@ public class ProducerConsumerController {
         foreman.addProducer(producer);
         foreman.addProducer(producer1);
         foreman.addProducer(producer2);
-        foreman.start();
     }
 
 

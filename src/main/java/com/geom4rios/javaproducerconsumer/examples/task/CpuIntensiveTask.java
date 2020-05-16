@@ -1,4 +1,4 @@
-package com.geom4rios.javaproducerconsumer.examples;
+package com.geom4rios.javaproducerconsumer.examples.task;
 
 import com.geom4rios.javaproducerconsumer.task.Task;
 import com.geom4rios.javaproducerconsumer.task.TaskType;

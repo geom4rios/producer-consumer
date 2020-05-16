@@ -1,5 +1,6 @@
 package com.geom4rios.javaproducerconsumer.examples;
 
+import com.geom4rios.javaproducerconsumer.examples.task.IOIntensiveTask;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.task.Task;
 
@@ -8,17 +9,14 @@ import java.util.List;
 
 public class IOProducer implements Producer {
 
+    private final int numberOfTasksToCreate = 15;
+
     @Override
     public List<Task> createNewTasks() {
         List<Task> taskList = new ArrayList<>();
-        for (int i=0; i<numberOfTasksToCreate(); i++) {
+        for (int i=0; i<numberOfTasksToCreate; i++) {
             taskList.add(new IOIntensiveTask());
         }
         return taskList;
-    }
-
-    @Override
-    public int numberOfTasksToCreate() {
-        return 10;
     }
 }

@@ -6,6 +6,4 @@ import java.util.List;
 
 public interface Producer {
     List<Task> createNewTasks();
-
-    int numberOfTasksToCreate();
 }
