@@ -1,7 +1,6 @@
 package com.geom4rios.javaproducerconsumer;
 
 import com.geom4rios.javaproducerconsumer.consumer.Consumer;
-import com.geom4rios.javaproducerconsumer.examples.ProducerImpl;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,12 @@ public class JavaProducerConsumerConfiguration {
     }
 
     @Bean(name = "ioIntensiveExecutor")
-    public ExecutorService getExecutor() {
+    public ExecutorService getIoIntensiveExecutor() {
+        return Executors.newFixedThreadPool(16);
+    }
+
+    @Bean(name = "memoryIntensiveExecutor")
+    public ExecutorService getMemoryIntensiveExecutor() {
         return Executors.newFixedThreadPool(16);
     }
 
@@ -57,5 +61,11 @@ public class JavaProducerConsumerConfiguration {
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public Consumer getConsumerCPU(Engine engine, Logger log) {
         return new Consumer(engine, TaskType.CPU_INTENSIVE, log);
+    }
+
+    @Bean(name = "memoryConsumer")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public Consumer getConsumerMemory(Engine engine, Logger log) {
+        return new Consumer(engine, TaskType.MEMORY_INTENSIVE, log);
     }
 }

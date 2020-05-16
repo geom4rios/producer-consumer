@@ -13,6 +13,7 @@ public class Engine {
     public static int messagesConsumed = 0;
     public AtomicInteger cpuIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger ioIntensiveTasks = new AtomicInteger(0);
+    public AtomicInteger memoryIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger totalTasksToCreate;
     private final int queueCapacity;
     private final TaskType taskType;
@@ -23,5 +24,21 @@ public class Engine {
         this.taskType = taskType;
         blockingDeque = new ConcurrentLinkedDeque<>();
         this.totalTasksToCreate = new AtomicInteger(totalTasksToCreate);
+    }
+
+    public void decreaseTaskByType(TaskType taskType) {
+        switch(taskType) {
+            case IO_INTENSIVE:
+                this.ioIntensiveTasks.decrementAndGet();
+                break;
+            case CPU_INTENSIVE:
+                this.cpuIntensiveTasks.decrementAndGet();
+                break;
+            case MEMORY_INTENSIVE:
+                this.memoryIntensiveTasks.decrementAndGet();
+                break;
+            default:
+                throw new UnsupportedOperationException("Task type not recognized!");
+        }
     }
 }

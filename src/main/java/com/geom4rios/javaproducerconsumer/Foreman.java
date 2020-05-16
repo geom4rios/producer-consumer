@@ -20,6 +20,7 @@ public class Foreman extends Thread {
     private final ExecutorService producerService;
     private final ExecutorService ioService;
     private final ExecutorService cpuService;
+    private final ExecutorService memoryService;
     private final Logger log;
 
     List<Producer> producerList = new ArrayList<>();
@@ -31,6 +32,7 @@ public class Foreman extends Thread {
         @Qualifier("producerExecutor") ExecutorService producerService,
         @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
         @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
+        @Qualifier("memoryIntensiveExecutor") ExecutorService memoryService,
         Logger log)
     {
         this.appContext = applicationContext;
@@ -38,6 +40,7 @@ public class Foreman extends Thread {
         this.producerService = producerService;
         this.ioService = ioService;
         this.cpuService = cpuService;
+        this.memoryService = memoryService;
         this.log = log;
     }
 
@@ -92,6 +95,13 @@ public class Foreman extends Thread {
             log.info("Current io intensive tasks: " + currentIoIntensiveTasks);
             Consumer consumer = appContext.getBean("ioConsumer", Consumer.class);
             ioService.submit(consumer);
+        }
+        int currentMemoryIntensiveTasks = this.engine.memoryIntensiveTasks.get();
+        if (currentMemoryIntensiveTasks > 0) {
+            log.info("Creating new consumer for memory operations and adding to memory service");
+            log.info("Current memory intensive tasks: " + currentMemoryIntensiveTasks);
+            Consumer consumer = appContext.getBean("memoryConsumer", Consumer.class);
+            memoryService.submit(consumer);
         }
     }
 }

@@ -3,7 +3,7 @@ package com.geom4rios.javaproducerconsumer.examples;
 import com.geom4rios.javaproducerconsumer.task.Task;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 
-public class TaskImpl implements Task {
+public class IOIntensiveTask implements Task {
 
     @Override
     public void execute() {

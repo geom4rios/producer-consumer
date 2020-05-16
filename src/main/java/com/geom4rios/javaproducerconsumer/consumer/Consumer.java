@@ -26,9 +26,11 @@ public class Consumer implements Runnable {
                     if (task.getTaskType() == this.taskType) {
                         log.info("Consuming " + this.taskType.name() + " task!");
                         task.execute();
+                        this.engine.decreaseTaskByType(taskType);
                     } else {
                         log.info("Adding task back to queue");
                         engine.blockingDeque.addFirst(task);
+                        Thread.sleep(500); // leave some time for other consumers to pick that task
                     }
                 } else {
                     break;
