@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/engine")
+@RequestMapping("/engine/example")
 public class ProducerConsumerController {
 
     private final Foreman foreman;
@@ -17,8 +17,7 @@ public class ProducerConsumerController {
     }
 
     @GetMapping
-    public void startEngine() {
-        // start engine
+    public void example() {
         Producer producer = new IOProducer();
         Producer producer1 = new CpuProducer();
         Producer producer2 = new MemoryProducer();
@@ -26,7 +25,4 @@ public class ProducerConsumerController {
         foreman.addProducer(producer1);
         foreman.addProducer(producer2);
     }
-
-
-
 }

@@ -31,7 +31,7 @@ public class Engine {
 
 
     public void decreaseTaskByType(TaskType taskType) {
-        switch(taskType) {
+        switch (taskType) {
             case IO_INTENSIVE:
                 this.ioIntensiveTasks.decrementAndGet();
                 this.ioIntensiveTasksConsumed.incrementAndGet();

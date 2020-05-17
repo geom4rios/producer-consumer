@@ -9,7 +9,7 @@ import java.util.List;
 
 public class IOProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 1500;
+    private final int numberOfTasksToCreate = 4000;
 
     @Override
     public List<Task> createNewTasks() {
