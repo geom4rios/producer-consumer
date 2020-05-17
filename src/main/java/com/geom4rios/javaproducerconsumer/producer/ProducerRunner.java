@@ -21,6 +21,7 @@ public class ProducerRunner implements Runnable {
 
     @Override
     public void run() {
+        this.engine.numberOfProducersRunning.incrementAndGet();
         List<Task> newTasks = this.producer.createNewTasks();
         for (Task taskCreated : newTasks) {
             this.engine.concurrentLinkedDeque.addLast(taskCreated);

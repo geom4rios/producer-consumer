@@ -105,7 +105,6 @@ public class Foreman extends Thread {
         for (Producer producer : producerList) {
             ProducerRunner producerRunner = new ProducerRunner(this.engine, producer, this.log);
             producerService.submit(producerRunner);
-            this.engine.numberOfProducersRunning.incrementAndGet();
         }
         producerList.clear();
     }
