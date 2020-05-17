@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 public class Foreman extends Thread {
@@ -119,7 +120,8 @@ public class Foreman extends Thread {
     private boolean shouldCreateIoConsumer() {
         int currentIoIntensiveTasks = this.engine.ioIntensiveTasks.get();
         if (currentIoIntensiveTasks > 0) {
-            return true;
+            int maxPoolSize = ((ThreadPoolExecutor) ioService).getMaximumPoolSize();
+            return engine.ioIntensiveConsumersRunning.get() < (maxPoolSize * 2);
         }
         return false;
     }
@@ -135,7 +137,8 @@ public class Foreman extends Thread {
     private boolean shouldCreateCpuConsumer() {
         int currentCpuIntensiveTasks = this.engine.cpuIntensiveTasks.get();
         if (currentCpuIntensiveTasks > 0) {
-            return true;
+            int maxPoolSize = ((ThreadPoolExecutor) cpuService).getMaximumPoolSize();
+            return engine.cpuIntensiveConsumersRunning.get() < (maxPoolSize * 2);
         }
         return false;
     }
@@ -151,7 +154,8 @@ public class Foreman extends Thread {
     private boolean shouldCreateMemoryConsumer() {
         int currentMemoryIntensiveTasks = this.engine.memoryIntensiveTasks.get();
         if (currentMemoryIntensiveTasks > 0) {
-            return true;
+            int maxPoolSize = ((ThreadPoolExecutor) memoryService).getMaximumPoolSize();
+            return engine.memoryIntensiveConsumersRunning.get() < (maxPoolSize * 2);
         }
         return false;
     }
