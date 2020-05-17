@@ -67,7 +67,8 @@
                 <version>2.2.0</version>
                 <configuration>
                     <to>
-                        <image>geom4rios/java-producer-consumer:master</image>
+                        <image>docker.io/geom4rios/java-producer-consumer:master</image>
+                        <credHelper>secretservice</credHelper>
                     </to>
                 </configuration>
             </plugin>

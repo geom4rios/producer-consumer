@@ -8,9 +8,10 @@ are consuming the generated tasks for processing.
 
 Both Consumers & Producers have a shared place (Queue) where the Producer adds tasks and the Consumer removes and processes the tasks.
 
-## How it works
+## General info
 
-
+This is a Spring Boot project using Java 11, the implementation of the producer consumer is done in pure Java and no external libraries where used.
+The application is using the Spring IoC containers which are responsible for instantiating, configuring, and assembling beans.
 
 ## Terminology
 
@@ -30,11 +31,25 @@ The foreman is always alive, in case there are no tasks to produce or consume th
  
  ## How to extend the service
  
- In order to extend the service you need to create your own Producer & Tasks and then create a Controller class that will add/register the producer to the Foreman.
- An example is already provided under the example package. Once that is done you can monitor the task processing of your producer by hitting the /monitor endpoint.
+ In order to extend the service you need to create your own Producer & Tasks and then create a Controller class that will add/register the producer to the Foreman.<br>
+ An example is already provided under the example package. <br>
+ Once that is done you can monitor the task processing of your producer by hitting the `/monitor` endpoint.
  
  ## How to run with Maven
+ Once you are in the project's home directory then run below command. <br>
+ Using the spring boot plugin: `mvn spring-boot:run` 
  
  ## How to run with docker
+ 
+ `docker run geom4rios/java-producer-consumer:master`
+ 
+ ## How to run the example
+ 
+ Once the application is up and running then using a rest client, i.e postman or insomnia, hit the endpoint `{{host}}/engine/example`.<br>
+ You can monitor the application by hitting the endpoint `{{host}}/monitor`.
+ 
+ The default host used is http://localhost:8080.
+ 
+ 
  
  
