@@ -27,6 +27,11 @@ public class JavaProducerConsumerConfiguration {
         return Executors.newCachedThreadPool();
     }
 
+    @Bean(name = "distributorExecutor")
+    public ExecutorService getDistributorExecutor() {
+        return Executors.newSingleThreadExecutor();
+    }
+
     @Bean(name = "cpuIntensiveExecutor")
     public ExecutorService getCpuIntensiveExecutor() {
         int numberOfCores = Runtime.getRuntime().availableProcessors();

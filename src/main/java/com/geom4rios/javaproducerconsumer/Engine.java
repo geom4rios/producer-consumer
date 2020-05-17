@@ -22,8 +22,13 @@ public class Engine {
     public AtomicInteger cpuIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger ioIntensiveTasks = new AtomicInteger(0);
     public AtomicInteger memoryIntensiveTasks = new AtomicInteger(0);
-    // queue
+    // shared queue
     public ConcurrentLinkedDeque<Task> concurrentLinkedDeque = new ConcurrentLinkedDeque<>();
+    // specific queues per task type
+    public ConcurrentLinkedDeque<Task> cpuConcurrentLinkedDeque = new ConcurrentLinkedDeque<>();
+    public ConcurrentLinkedDeque<Task> ioConcurrentLinkedDeque = new ConcurrentLinkedDeque<>();
+    public ConcurrentLinkedDeque<Task> memoryConcurrentLinkedDeque = new ConcurrentLinkedDeque<>();
+
 
     public void decreaseTaskByType(TaskType taskType) {
         switch(taskType) {

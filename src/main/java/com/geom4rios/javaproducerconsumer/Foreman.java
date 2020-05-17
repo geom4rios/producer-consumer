@@ -1,6 +1,7 @@
 package com.geom4rios.javaproducerconsumer;
 
 import com.geom4rios.javaproducerconsumer.consumer.Consumer;
+import com.geom4rios.javaproducerconsumer.consumer.ConsumerDistributor;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ public class Foreman extends Thread {
 
     private final ApplicationContext appContext;
     private final Engine engine;
+    private final ExecutorService distributorService;
     private final ExecutorService producerService;
     private final ExecutorService ioService;
     private final ExecutorService cpuService;
@@ -32,6 +34,7 @@ public class Foreman extends Thread {
             (
                     ApplicationContext applicationContext,
                     Engine engine,
+                    @Qualifier("distributorExecutor") ExecutorService distributorService,
                     @Qualifier("producerExecutor") ExecutorService producerService,
                     @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
                     @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
@@ -41,6 +44,7 @@ public class Foreman extends Thread {
     {
         this.appContext = applicationContext;
         this.engine = engine;
+        this.distributorService = distributorService;
         this.producerService = producerService;
         this.ioService = ioService;
         this.cpuService = cpuService;
@@ -70,6 +74,7 @@ public class Foreman extends Thread {
                     }
                 }
                 runProducers();
+                runDistributor();
                 Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
@@ -101,8 +106,12 @@ public class Foreman extends Thread {
         producerList.clear();
     }
 
+    private void runDistributor() {
+        distributorService.submit(new ConsumerDistributor(engine, log));
+    }
+
     private boolean needToCreateConsumer() {
-        return engine.concurrentLinkedDeque.size() > 0;
+        return engine.concurrentLinkedDeque.size() > 0 || engine.memoryConcurrentLinkedDeque.size() > 0 || engine.ioConcurrentLinkedDeque.size() > 0 || engine.cpuConcurrentLinkedDeque.size() > 0;
     }
 
     private void createConsumers() {

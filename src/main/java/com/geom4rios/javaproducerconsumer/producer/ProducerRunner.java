@@ -31,9 +31,9 @@ public class ProducerRunner implements Runnable {
             } else if (taskCreated.getTaskType() == TaskType.MEMORY_INTENSIVE) {
                 this.engine.memoryIntensiveTasks.addAndGet(1);
             }
-            log.info("Task produced of type: " + taskCreated.getTaskType().name());
+            log.debug("Task produced of type: " + taskCreated.getTaskType().name());
         }
-        log.info("Producer completed!");
+        log.info("Producer completed! tasks produced: " + newTasks.size());
         this.engine.numberOfProducersRunning.decrementAndGet();
     }
 }
