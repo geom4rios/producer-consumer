@@ -34,14 +34,6 @@ class ConsumerDistributorTest {
 
     @BeforeEach
     public void setUp() {
-        assertThat(engine.concurrentLinkedDeque.size()).isZero();
-        assertThat(engine.ioConcurrentLinkedDeque.size()).isZero();
-        assertThat(engine.cpuConcurrentLinkedDeque.size()).isZero();
-        assertThat(engine.memoryConcurrentLinkedDeque.size()).isZero();
-    }
-
-    @AfterEach
-    public void tearDown() {
         engine.concurrentLinkedDeque.clear();
         engine.ioConcurrentLinkedDeque.clear();
         engine.cpuConcurrentLinkedDeque.clear();

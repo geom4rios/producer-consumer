@@ -21,7 +21,11 @@ public class JavaProducerConsumerConfiguration {
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public Logger logger(InjectionPoint injectionPoint){
-        return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass());
+        if (injectionPoint.getMethodParameter() != null) {
+            return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass().getName());
+        } else {
+            return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+        }
     }
 
     @Bean(name = "producerExecutor")
