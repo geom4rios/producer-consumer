@@ -1,0 +1,97 @@
+swagger: "2.0"
+info:
+  description: "This is a small API description of the producer-consumer app."
+  version: "1.0.0"
+  title: "Java Producer-Consumer"
+  contact:
+    email: "geom4rios@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: "/"
+tags:
+  - name: "engine"
+    description: "Run tasks using this endpoint"
+  - name: "monitor"
+    description: "Monitor tasks and application metrics"
+schemes:
+  - "http"
+paths:
+  /engine/example:
+    get:
+      tags:
+        - "engine"
+      summary: "Run the example"
+      description: ""
+      operationId: "example"
+      responses:
+        "200":
+          description: "Successful operation"
+  /monitor:
+    get:
+      tags:
+        - "monitor"
+      summary: "Monitor tasks and application metrics"
+      description: ""
+      operationId: "getRestEngine"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/restEngine"
+
+definitions:
+  restEngine:
+    type: "object"
+    properties:
+      producersRunning:
+        type: "integer"
+        format: "int64"
+        example: 0
+      consumersRunning:
+        type: "integer"
+        format: "int64"
+      cpuConsumersRunning:
+        type: "integer"
+        format: "int64"
+      ioConsumersRunning:
+        type: "integer"
+        format: "int64"
+      memoryConsumersRunning:
+        type: "integer"
+        format: "int64"
+      cpuIntensiveTasksConsumed:
+        type: "integer"
+        format: "int64"
+      memoryIntensiveTasksConsumed:
+        type: "integer"
+        format: "int64"
+      ioIntensiveTasksConsumed:
+        type: "integer"
+        format: "int64"
+      pendingCpuIntensiveTasks:
+        type: "integer"
+        format: "int64"
+      pendingIOIntensiveTasks:
+        type: "integer"
+        format: "int64"
+      pendingMemoryIntensiveTasks:
+        type: "integer"
+        format: "int64"
+      totalTasksProduced:
+        type: "integer"
+        format: "int64"
+      totalTasksConsumed:
+        type: "integer"
+        format: "int64"
+      totalPendingTasks:
+        type: "integer"
+        format: "int64"
+      threadsRunning:
+        type: "integer"
+        format: "int64"
+      memoryAllocated:
+        type: "integer"
+        format: "int64"

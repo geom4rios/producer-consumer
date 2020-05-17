@@ -50,6 +50,11 @@ The foreman is always alive, in case there are no tasks to produce or consume th
  
  The default host used is http://localhost:8080.
  
+ ## API Documentation
+ 
+ A small API documentation exists, you can view the API by going into this url -> `https://editor.swagger.io/`
+ and copy pasting the contents of the `producer-consumer-swagger.yml` file inside the editor.
+ 
  
  
  
