@@ -1,6 +1,8 @@
 package com.geom4rios.javaproducerconsumer;
 
 import com.geom4rios.javaproducerconsumer.consumer.Consumer;
+import com.geom4rios.javaproducerconsumer.consumer.ConsumerDistributor;
+import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ public class JavaProducerConsumerConfiguration {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    Logger logger(InjectionPoint injectionPoint){
+    public Logger logger(InjectionPoint injectionPoint){
         return LoggerFactory.getLogger(injectionPoint.getMethodParameter().getContainingClass());
     }
 
@@ -56,6 +58,11 @@ public class JavaProducerConsumerConfiguration {
     @Bean
     public Engine getEngine() {
         return new Engine();
+    }
+
+    @Bean
+    public ConsumerDistributor consumerDistributor(Engine engine, Logger log) {
+        return new ConsumerDistributor(engine, log);
     }
 
     @Bean(name = "ioConsumer")

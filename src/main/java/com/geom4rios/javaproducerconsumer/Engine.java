@@ -67,4 +67,23 @@ public class Engine {
                 throw new UnsupportedOperationException("Task type not recognized!");
         }
     }
+
+    public void increaseConsumersRunningByType(TaskType taskType) {
+        switch(taskType) {
+            case IO_INTENSIVE:
+                this.ioIntensiveConsumersRunning.incrementAndGet();
+                this.numberOfConsumersRunning.incrementAndGet();
+                break;
+            case CPU_INTENSIVE:
+                this.cpuIntensiveConsumersRunning.incrementAndGet();
+                this.numberOfConsumersRunning.incrementAndGet();
+                break;
+            case MEMORY_INTENSIVE:
+                this.memoryIntensiveConsumersRunning.incrementAndGet();
+                this.numberOfConsumersRunning.incrementAndGet();
+                break;
+            default:
+                throw new UnsupportedOperationException("Task type not recognized!");
+        }
+    }
 }

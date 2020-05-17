@@ -4,6 +4,7 @@ import com.geom4rios.javaproducerconsumer.consumer.Consumer;
 import com.geom4rios.javaproducerconsumer.consumer.ConsumerDistributor;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
+import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -26,6 +27,7 @@ public class Foreman extends Thread {
     private final ExecutorService ioService;
     private final ExecutorService cpuService;
     private final ExecutorService memoryService;
+    private final ConsumerDistributor consumerDistributor;
     private final Logger log;
 
     List<Producer> producerList = new ArrayList<>();
@@ -39,6 +41,7 @@ public class Foreman extends Thread {
                     @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
                     @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
                     @Qualifier("memoryIntensiveExecutor") ExecutorService memoryService,
+                    ConsumerDistributor consumerDistributor,
                     Logger log
             )
     {
@@ -49,6 +52,7 @@ public class Foreman extends Thread {
         this.ioService = ioService;
         this.cpuService = cpuService;
         this.memoryService = memoryService;
+        this.consumerDistributor = consumerDistributor;
         this.log = log;
     }
 
@@ -69,7 +73,7 @@ public class Foreman extends Thread {
                 }
                 if (!needToCreateConsumer && producerList.isEmpty()) {
                     log.info("Foreman waiting for producers");
-                    synchronized (this){
+                    synchronized (this) {
                         this.wait();
                     }
                 }
@@ -107,7 +111,7 @@ public class Foreman extends Thread {
     }
 
     private void runDistributor() {
-        distributorService.submit(new ConsumerDistributor(engine, log));
+        distributorService.submit(consumerDistributor);
     }
 
     private boolean needToCreateConsumer() {
@@ -139,8 +143,7 @@ public class Foreman extends Thread {
         log.info("Creating new consumer for io operations and adding to io service");
         Consumer consumer = appContext.getBean("ioConsumer", Consumer.class);
         ioService.submit(consumer);
-        this.engine.numberOfConsumersRunning.incrementAndGet();
-        this.engine.ioIntensiveConsumersRunning.incrementAndGet();
+        this.engine.increaseConsumersRunningByType(TaskType.IO_INTENSIVE);
     }
 
     private boolean shouldCreateCpuConsumer() {
@@ -156,8 +159,7 @@ public class Foreman extends Thread {
         log.info("Creating new consumer for cpu operations and adding to cpu service!");
         Consumer consumer = appContext.getBean("cpuConsumer", Consumer.class);
         cpuService.submit(consumer);
-        this.engine.numberOfConsumersRunning.incrementAndGet();
-        this.engine.cpuIntensiveConsumersRunning.incrementAndGet();
+        this.engine.increaseConsumersRunningByType(TaskType.CPU_INTENSIVE);
     }
 
     private boolean shouldCreateMemoryConsumer() {
@@ -173,7 +175,6 @@ public class Foreman extends Thread {
         log.info("Creating new consumer for memory operations and adding to memory service");
         Consumer consumer = appContext.getBean("memoryConsumer", Consumer.class);
         memoryService.submit(consumer);
-        this.engine.numberOfConsumersRunning.incrementAndGet();
-        this.engine.memoryIntensiveConsumersRunning.incrementAndGet();
+        this.engine.increaseConsumersRunningByType(TaskType.MEMORY_INTENSIVE);
     }
 }
