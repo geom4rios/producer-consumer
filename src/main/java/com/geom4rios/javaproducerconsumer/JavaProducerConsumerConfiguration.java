@@ -1,8 +1,7 @@
 package com.geom4rios.javaproducerconsumer;
 
 import com.geom4rios.javaproducerconsumer.consumer.Consumer;
-import com.geom4rios.javaproducerconsumer.consumer.ConsumerDistributor;
-import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
+import com.geom4rios.javaproducerconsumer.consumer.TaskDistributor;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +64,8 @@ public class JavaProducerConsumerConfiguration {
     }
 
     @Bean
-    public ConsumerDistributor consumerDistributor(Engine engine, Logger log) {
-        return new ConsumerDistributor(engine, log);
+    public TaskDistributor consumerDistributor(Engine engine, Logger log) {
+        return new TaskDistributor(engine, log);
     }
 
     @Bean(name = "ioConsumer")

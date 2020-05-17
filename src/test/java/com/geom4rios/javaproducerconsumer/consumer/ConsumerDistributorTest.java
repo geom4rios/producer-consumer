@@ -4,8 +4,6 @@ import com.geom4rios.javaproducerconsumer.Engine;
 import com.geom4rios.javaproducerconsumer.config.ProducerConsumerTestConfiguration;
 import com.geom4rios.javaproducerconsumer.task.Task;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +15,9 @@ import org.springframework.context.annotation.Import;
 import java.util.Queue;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Import(ProducerConsumerTestConfiguration.class)
-@SpringBootTest(classes = {Logger.class, Engine.class, ConsumerDistributor.class})
+@SpringBootTest(classes = {Logger.class, Engine.class, TaskDistributor.class})
 class ConsumerDistributorTest {
 
     @Autowired
@@ -30,7 +27,7 @@ class ConsumerDistributorTest {
     Logger log;
 
     @Autowired
-    ConsumerDistributor consumerDistributor;
+    TaskDistributor taskDistributor;
 
     @BeforeEach
     public void setUp() {
@@ -47,7 +44,7 @@ class ConsumerDistributorTest {
         log.info("Insert io task into the shared queue");
         engine.concurrentLinkedDeque.addLast(task);
         log.info("Invoke method");
-        consumerDistributor.run();
+        taskDistributor.run();
         log.info("assert that ioQueue got the task");
         assertThat(engine.ioConcurrentLinkedDeque.size()).as("IO concurrent queue should got the task after the distributor run").isOne();
         log.info("Assert that rest of the queues are empty");
@@ -61,7 +58,7 @@ class ConsumerDistributorTest {
         log.info("Insert cpu task into the shared queue");
         engine.concurrentLinkedDeque.addLast(task);
         log.info("Invoke method");
-        consumerDistributor.run();
+        taskDistributor.run();
         log.info("assert that cpuQueue got the task");
         assertThat(engine.cpuConcurrentLinkedDeque.size()).as("CPU concurrent queue should got the task after the distributor run").isOne();
         log.info("Assert that rest of the queues are empty");
@@ -76,7 +73,7 @@ class ConsumerDistributorTest {
         log.info("Insert memory task into the shared queue");
         engine.concurrentLinkedDeque.addLast(task);
         log.info("Invoke method");
-        consumerDistributor.run();
+        taskDistributor.run();
         log.info("assert that memoryQueue got the task");
         assertThat(engine.memoryConcurrentLinkedDeque.size()).as("Memory concurrent queue should got the task after the distributor run").isOne();
         log.info("Assert that rest of the queues are empty");

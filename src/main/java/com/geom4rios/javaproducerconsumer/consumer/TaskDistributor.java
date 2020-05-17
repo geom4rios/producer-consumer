@@ -5,12 +5,12 @@ import com.geom4rios.javaproducerconsumer.task.Task;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 
-public class ConsumerDistributor implements Runnable {
+public class TaskDistributor implements Runnable {
 
     private final Engine engine;
     private final Logger log;
 
-    public ConsumerDistributor(Engine engine, Logger log) {
+    public TaskDistributor(Engine engine, Logger log) {
         this.engine = engine;
         this.log = log;
     }
@@ -42,9 +42,9 @@ public class ConsumerDistributor implements Runnable {
                     break;
                 }
             }
-            log.info("Distributor consumer died after waiting for 1 second to poll an element from the queue and got nothing");
+            log.info("Task distributor died after waiting for 1 second to poll an element from the queue and got nothing");
         } catch (Exception e) {
-            log.info("Distributor Consumer died after an exception occurred!");
+            log.info("Task distributor died after an exception occurred!");
             log.error(e.getMessage(), e);
         }
     }

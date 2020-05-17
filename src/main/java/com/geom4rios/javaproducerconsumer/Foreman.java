@@ -1,7 +1,7 @@
 package com.geom4rios.javaproducerconsumer;
 
 import com.geom4rios.javaproducerconsumer.consumer.Consumer;
-import com.geom4rios.javaproducerconsumer.consumer.ConsumerDistributor;
+import com.geom4rios.javaproducerconsumer.consumer.TaskDistributor;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.producer.ProducerRunner;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
@@ -27,7 +27,7 @@ public class Foreman extends Thread {
     private final ExecutorService ioService;
     private final ExecutorService cpuService;
     private final ExecutorService memoryService;
-    private final ConsumerDistributor consumerDistributor;
+    private final TaskDistributor taskDistributor;
     private final Logger log;
 
     List<Producer> producerList = new ArrayList<>();
@@ -41,7 +41,7 @@ public class Foreman extends Thread {
                     @Qualifier("ioIntensiveExecutor") ExecutorService ioService,
                     @Qualifier("cpuIntensiveExecutor") ExecutorService cpuService,
                     @Qualifier("memoryIntensiveExecutor") ExecutorService memoryService,
-                    ConsumerDistributor consumerDistributor,
+                    TaskDistributor taskDistributor,
                     Logger log
             )
     {
@@ -52,7 +52,7 @@ public class Foreman extends Thread {
         this.ioService = ioService;
         this.cpuService = cpuService;
         this.memoryService = memoryService;
-        this.consumerDistributor = consumerDistributor;
+        this.taskDistributor = taskDistributor;
         this.log = log;
     }
 
@@ -110,7 +110,7 @@ public class Foreman extends Thread {
     }
 
     private void runDistributor() {
-        distributorService.submit(consumerDistributor);
+        distributorService.submit(taskDistributor);
     }
 
     private boolean needToCreateConsumer() {
