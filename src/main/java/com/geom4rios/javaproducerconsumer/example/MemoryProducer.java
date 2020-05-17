@@ -1,21 +1,21 @@
-package com.geom4rios.javaproducerconsumer.examples;
+package com.geom4rios.javaproducerconsumer.example;
 
-import com.geom4rios.javaproducerconsumer.examples.task.IOIntensiveTask;
+import com.geom4rios.javaproducerconsumer.example.task.MemoryIntensiveTaskImpl;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IOProducer implements Producer {
+public class MemoryProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 1500;
+    private final int numberOfTasksToCreate = 500;
 
     @Override
     public List<Task> createNewTasks() {
         List<Task> taskList = new ArrayList<>();
         for (int i=0; i<numberOfTasksToCreate; i++) {
-            taskList.add(new IOIntensiveTask());
+            taskList.add(new MemoryIntensiveTaskImpl());
         }
         return taskList;
     }

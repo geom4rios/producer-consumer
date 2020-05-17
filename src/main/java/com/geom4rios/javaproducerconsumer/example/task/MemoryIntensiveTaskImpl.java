@@ -1,4 +1,4 @@
-package com.geom4rios.javaproducerconsumer.examples.task;
+package com.geom4rios.javaproducerconsumer.example.task;
 
 import com.geom4rios.javaproducerconsumer.task.MemoryIntensiveTask;
 import com.geom4rios.javaproducerconsumer.task.TaskType;

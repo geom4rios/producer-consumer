@@ -1,6 +1,6 @@
-package com.geom4rios.javaproducerconsumer.examples;
+package com.geom4rios.javaproducerconsumer.example;
 
-import com.geom4rios.javaproducerconsumer.examples.task.CpuIntensiveTask;
+import com.geom4rios.javaproducerconsumer.example.task.CpuIntensiveTask;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
 import com.geom4rios.javaproducerconsumer.task.Task;
 
