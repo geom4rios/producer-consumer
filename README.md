@@ -24,9 +24,12 @@ When you add/register a producer to the Foreman, the foreman will  wrap the prod
 
 **Engine** -> Holds the state of the producer-consumer application, it holds the common queue & various monitor statistics based on which the foreman can make decisions.
  
-**Foreman** -> Responsible to instantiate/spawn the ProducerRunner and Consumer threads that will write and read from the common queue. 
-The foreman is always alive, in case there are no tasks to produce or consume the foreman goes into wait mode.
- 
+**Foreman** -> This class is always up and running and is basically the orchestrator of the application. <br>
+Responsible to instantiate/spawn the ProducerRunner threads that will write to the common queue. <br>
+Responsible to instantiate the TaskDistributor that will read from the common queue and write to the task types specific queues <br>
+Responsible to instantiate the task type specific Consumer threads that will read and consume tasks from their task type specific queue. <br>
+In case there an no tasks pending for production or consumption then the foreman goes into wait mode.
+
 **TaskDistributor** -> Responsible to distribute the tasks from the shared queue to their associated queue by type, i.e an io task will be moved from the shared queue to the io queue
  
  ## How to extend the service

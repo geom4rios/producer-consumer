@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * This class is always up and running and is basically the orchestrator of the application. <br>
- * Responsible to instantiate/spawn the ProducerRunner that will write to the common queue. <br>
+ * Responsible to instantiate/spawn the ProducerRunner threads that will write to the common queue. <br>
  * Responsible to instantiate the {@link TaskDistributor TaskDistributor} that will read from the common queue and write to the {@link TaskType task types} specific queues <br>
  * Responsible to instantiate the {@link TaskType TaskType} specific {@link Consumer Consumer} threads that will read and consume tasks from their {@link TaskType TaskType} specific queue. <br>
  * In case there an no tasks pending for production or consumption then the foreman goes into wait mode.
