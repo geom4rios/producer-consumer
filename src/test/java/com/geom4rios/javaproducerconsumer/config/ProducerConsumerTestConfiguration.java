@@ -5,7 +5,6 @@ import com.geom4rios.javaproducerconsumer.example.task.CpuIntensiveTask;
 import com.geom4rios.javaproducerconsumer.example.task.IOIntensiveTask;
 import com.geom4rios.javaproducerconsumer.example.task.MemoryIntensiveTaskImpl;
 import com.geom4rios.javaproducerconsumer.producer.Producer;
-import com.geom4rios.javaproducerconsumer.task.MemoryIntensiveTask;
 import com.geom4rios.javaproducerconsumer.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;

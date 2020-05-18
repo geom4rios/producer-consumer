@@ -9,12 +9,11 @@ import java.util.List;
 
 public class CpuProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 20;
-
     @Override
     public List<Task> createNewTasks() {
         List<Task> taskList = new ArrayList<>();
-        for (int i=0; i<numberOfTasksToCreate; i++) {
+        int numberOfTasksToCreate = 20;
+        for (int i = 0; i< numberOfTasksToCreate; i++) {
             taskList.add(new CpuIntensiveTask());
         }
         return taskList;

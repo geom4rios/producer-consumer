@@ -7,6 +7,7 @@ public class IOIntensiveTask implements Task {
 
     @Override
     public void execute() {
+        // todo write an io intensive task
         System.out.println("SOME IO INTENSIVE TASK");
     }
 

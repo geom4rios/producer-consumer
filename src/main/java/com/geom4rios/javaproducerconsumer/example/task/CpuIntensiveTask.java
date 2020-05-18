@@ -11,6 +11,7 @@ public class CpuIntensiveTask implements Task {
 
     @Override
     public void execute() {
+        // todo write a cpu intensive task
         System.out.println("CPU INTENSIVE TASK");
     }
 }

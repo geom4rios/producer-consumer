@@ -58,6 +58,8 @@ class ForemanTest {
         clearQueues();
     }
 
+    // todo write more tests for the foreman class
+
     /* PRIVATE AUXILIARY */
 
     private Method getNeedToCreateConsumerReflected() throws NoSuchMethodException {

@@ -9,12 +9,11 @@ import java.util.List;
 
 public class IOProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 40;
-
     @Override
     public List<Task> createNewTasks() {
         List<Task> taskList = new ArrayList<>();
-        for (int i=0; i<numberOfTasksToCreate; i++) {
+        int numberOfTasksToCreate = 40;
+        for (int i = 0; i< numberOfTasksToCreate; i++) {
             taskList.add(new IOIntensiveTask());
         }
         return taskList;
