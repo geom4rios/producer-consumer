@@ -44,7 +44,7 @@ In case there an no tasks pending for production or consumption then the foreman
  
  ## How to run with docker
  
- `docker run geom4rios/java-producer-consumer:master`
+ `docker run -p 8080:8080 geom4rios/java-producer-consumer:master`
  
  ## How to run the example
  
