@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CpuProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 2000;
+    private final int numberOfTasksToCreate = 20;
 
     @Override
     public List<Task> createNewTasks() {

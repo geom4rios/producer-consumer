@@ -6,6 +6,9 @@ import com.geom4rios.javaproducerconsumer.task.TaskType;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Class that holds the state of the producer-consumer application, it holds the common queue as well as the task type specific queues & various monitor statistics based on which the foreman can make decisions.
+ */
 public class Engine {
     // producers
     public AtomicInteger numberOfProducersRunning = new AtomicInteger(0);
@@ -30,6 +33,12 @@ public class Engine {
     public ConcurrentLinkedDeque<Task> memoryConcurrentLinkedDeque = new ConcurrentLinkedDeque<>();
 
 
+    /**
+     * Decrements the number of the pending tasks based on the {@link TaskType taskType} provided. <br>
+     * Increments the tasks consumed based on the {@link TaskType taskType} provided.
+     *
+     * @param taskType the {@link TaskType taskType}
+     */
     public void decreaseTaskByType(TaskType taskType) {
         switch (taskType) {
             case IO_INTENSIVE:
@@ -49,6 +58,12 @@ public class Engine {
         }
     }
 
+    /**
+     * Decreases the consumers running by the {@link TaskType taskType} provided. <br>
+     * Also decreases the total consumers running.
+     *
+     * @param taskType the {@link TaskType taskType}
+     */
     public void decreaseConsumersRunningByType(TaskType taskType) {
         switch(taskType) {
             case IO_INTENSIVE:
@@ -68,6 +83,12 @@ public class Engine {
         }
     }
 
+    /**
+     * Increases the consumers running based on the {@link TaskType taskType} provided. <br>
+     * Increases the total consumers running <br>
+     *
+     * @param taskType the {@link TaskType taskType}
+     */
     public void increaseConsumersRunningByType(TaskType taskType) {
         switch(taskType) {
             case IO_INTENSIVE:

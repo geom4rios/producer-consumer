@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Rest entity which holds the monitor metrics of the application.
+ */
 @Getter
 @Setter
 @NoArgsConstructor

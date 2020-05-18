@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MemoryProducer implements Producer {
 
-    private final int numberOfTasksToCreate = 4000;
+    private final int numberOfTasksToCreate = 40;
 
     @Override
     public List<Task> createNewTasks() {

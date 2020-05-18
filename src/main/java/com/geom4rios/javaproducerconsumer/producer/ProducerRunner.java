@@ -7,6 +7,10 @@ import org.slf4j.Logger;
 
 import java.util.List;
 
+/**
+ * Each instance of this class holds one {@link Producer} <br>
+ * Instances of this class will get the tasks that a producer is holding and add them to the shared queue.
+ */
 public class ProducerRunner implements Runnable {
 
     private final Engine engine;

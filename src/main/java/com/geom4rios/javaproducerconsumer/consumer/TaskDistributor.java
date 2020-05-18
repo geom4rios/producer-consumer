@@ -5,6 +5,9 @@ import com.geom4rios.javaproducerconsumer.task.Task;
 import com.geom4rios.javaproducerconsumer.task.TaskType;
 import org.slf4j.Logger;
 
+/**
+ * <p>Instances of this class will read/poll tasks from the shared queue and will re-write/distribute the tasks to the associated queue based on their {@link TaskType type}</p>
+ */
 public class TaskDistributor implements Runnable {
 
     private final Engine engine;
@@ -19,7 +22,7 @@ public class TaskDistributor implements Runnable {
     public void run() {
         try {
             while (true) {
-                Task task = engine.concurrentLinkedDeque.pollLast();
+                Task task = engine.concurrentLinkedDeque.pollFirst();
                 if (task != null) {
                     TaskType taskType = task.getTaskType();
                     switch (taskType) {

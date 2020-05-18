@@ -7,6 +7,10 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+/**
+ * <p>Instances of this class are responsible for consuming tasks either from the CPU queue, IO queue or the MEMORY queue.</p>
+ * <p>The 'type' of the consumer is defined by the {@link TaskType} parameter passed to the constructor of this class</p>
+ */
 public class Consumer implements Runnable {
 
     private final Engine engine;

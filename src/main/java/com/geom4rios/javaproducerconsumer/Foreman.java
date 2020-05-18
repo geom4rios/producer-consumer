@@ -14,9 +14,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * This class is always up and running and is basically the orchestrator of the application. <br>
+ * Responsible to instantiate/spawn the ProducerRunner that will write to the common queue. <br>
+ * Responsible to instantiate the {@link TaskDistributor TaskDistributor} that will read from the common queue and write to the {@link TaskType task types} specific queues <br>
+ * Responsible to instantiate the {@link TaskType TaskType} specific {@link Consumer Consumer} threads that will read and consume tasks from their {@link TaskType TaskType} specific queue. <br>
+ * In case there an no tasks pending for production or consumption then the foreman goes into wait mode.
+ */
 @Component
 public class Foreman extends Thread {
 
@@ -30,7 +38,7 @@ public class Foreman extends Thread {
     private final TaskDistributor taskDistributor;
     private final Logger log;
 
-    List<Producer> producerList = new ArrayList<>();
+    List<Producer> producerList = new CopyOnWriteArrayList<>(); // this allows us to add more producers while running the current producers
 
     public Foreman
             (
@@ -58,6 +66,7 @@ public class Foreman extends Thread {
 
     @EventListener
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        // once we receive the application started event then the foreman is instantiated
         log.info("Starting foreman");
         this.start();
     }
@@ -67,10 +76,12 @@ public class Foreman extends Thread {
         super.run();
         try {
             while (true) {
+                // check if we need to create consumers
                 boolean needToCreateConsumer = needToCreateConsumer();
                 if (needToCreateConsumer) {
                     createConsumers();
                 }
+                // if no consumers are needed and no producer is registered then go to wait mode
                 if (!needToCreateConsumer && producerList.isEmpty()) {
                     log.info("Foreman waiting for producers");
                     synchronized (this) {
@@ -79,7 +90,7 @@ public class Foreman extends Thread {
                 }
                 runProducers();
                 runDistributor();
-                Thread.sleep(1000);
+                Thread.sleep(1000); // sleep for 1 second before re-iterating in order to free resources and let other threads do their work
             }
         } catch (InterruptedException e) {
             log.info("Foreman stopped unexpectedly!");
@@ -95,12 +106,17 @@ public class Foreman extends Thread {
     public void addProducer(Producer producer) {
         this.producerList.add(producer);
         synchronized (this) {
+            // get a lock of the object and in case we are in waiting mode then notify that we just got a producer added into our list
             if (this.getState().equals(State.WAITING)) {
                 this.notify();
             }
         }
     }
 
+    /**
+     * This method will instantiate one {@link ProducerRunner} instance for every {@link Producer} registered/added to the foreman's list. <br>
+     * Once all {@link ProducerRunner} instances are submitted to their thread pool then the foreman clears the list.
+     */
     private void runProducers() {
         for (Producer producer : producerList) {
             ProducerRunner producerRunner = new ProducerRunner(this.engine, producer, this.log);
@@ -113,10 +129,18 @@ public class Foreman extends Thread {
         distributorService.submit(taskDistributor);
     }
 
+    /**
+     * If all queues are empty then return false otherwise we need to create consumers so return true.
+     *
+     * @return true in case at least one {@link com.geom4rios.javaproducerconsumer.task.Task} exists in the shared queue or the {@TaskType TaskType} specific queues.
+     */
     private boolean needToCreateConsumer() {
         return engine.concurrentLinkedDeque.size() > 0 || engine.memoryConcurrentLinkedDeque.size() > 0 || engine.ioConcurrentLinkedDeque.size() > 0 || engine.cpuConcurrentLinkedDeque.size() > 0;
     }
 
+    /**
+     * Check which {@link TaskType TaskType} specific consumers to create.
+     */
     private void createConsumers() {
         if (shouldCreateCpuConsumer()) {
             createCpuConsumer();
